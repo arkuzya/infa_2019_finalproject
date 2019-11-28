@@ -2,6 +2,12 @@ import pygame
 import sys
 import random
 import time
+
+
+# frequency of screen updating
+FPS = 20
+
+
 class Game():
     def __init__(self):
         # screen parameters
@@ -27,13 +33,13 @@ class Game():
         if check_errors[1] > 0:
             sys.exit()
         else:
-            print('Ok')
+            print('Good bye!')
 
     def set_surface_and_title(self):
         # main surface of the game and title
         self.play_surface = pygame.display.set_mode((
             self.screen_width, self.screen_height))
-        pygame.display.set_caption('Snake Game')
+        pygame.display.set_caption('Snake Game Classic mode')
 
     def event_loop(self, new_direction):
         # check events from the keyboard
@@ -57,10 +63,11 @@ class Game():
         return new_direction
 
     def refresh_screen(self):
+        global FPS
         # screen update
         pygame.display.flip()
         # FIXME: хз как это работает, 23 надо сделать глобальной константой
-        self.fps_controller.tick(23)
+        self.fps_controller.tick(FPS)
 
     def show_score(self, choice=1):
         # show resiult
