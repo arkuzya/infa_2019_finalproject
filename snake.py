@@ -53,11 +53,13 @@ class Snake():
             food_pos = [random.randrange(1, screen_width / STEP) * STEP,
                         random.randrange(1, screen_height / STEP) * STEP]
             score += 1
+            checking_eating_food = True
         else:
             # если еды тут не оказалось, то удаляем последний элемент, который создавали в начале этой функции
             self.snake_body.pop()
+            checking_eating_food = False
 
-        return score, food_pos
+        return score, food_pos, checking_eating_food
 
     def draw_snake(self, play_surface, surface_color):
         global STEP

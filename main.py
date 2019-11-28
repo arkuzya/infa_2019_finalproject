@@ -20,7 +20,7 @@ while True:
 
     snake.validate_direction_and_change()
     snake.change_head_position()
-    game.score, food.food_pos = snake.snake_body_mechanism(
+    game.score, food.food_pos, checking_eating_food = snake.snake_body_mechanism(
         game.score, food.food_pos, game.screen_width, game.screen_height)
     snake.draw_snake(game.play_surface, game.white)
 
@@ -28,6 +28,9 @@ while True:
 
     snake.check_for_boundaries(
         game.game_over, game.screen_width, game.screen_height)
+
+    if checking_eating_food:
+        game.changing_fps()
 
     game.show_score()
     game.refresh_screen()

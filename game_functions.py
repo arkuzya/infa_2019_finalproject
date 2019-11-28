@@ -5,7 +5,9 @@ import time
 
 
 # frequency of screen updating
-FPS = 20
+FPS = 12
+# changing FPS for this value when eating one food
+DELTAFPS = 1
 
 
 class Game():
@@ -66,7 +68,6 @@ class Game():
         global FPS
         # screen update
         pygame.display.flip()
-        # FIXME: хз как это работает, 23 надо сделать глобальной константой
         self.fps_controller.tick(FPS)
 
     def show_score(self, choice=1):
@@ -96,3 +97,6 @@ class Game():
         pygame.quit()
         sys.exit()
 
+    def changing_fps(self):
+        global FPS, DELTAFPS
+        FPS += DELTAFPS
