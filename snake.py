@@ -8,10 +8,13 @@ import time
 
 # X0 and Y0 --- starting position of left upper corner of snake's head
 X0 = 100
-Y0 = 50
+Y0 = 150
 # STEP --- distance of moving snake per one cycle
 STEP = 10
-
+# BOARDWIDTH --- the width of the obstacles, which are set on the boards
+BOARDWIDTH = 20
+# the upper point of the playing  area
+Y_STARTING_POINT = 50
 
 class Snake():
     def __init__(self, snake_color):
@@ -44,39 +47,38 @@ class Snake():
             self.snake_head_pos[1] += STEP
 
     def snake_body_mechanism(self, score, food_pos, screen_width, screen_height):
-        global STEP
+        global STEP, BOARDWIDTH
         # moving snake's body
         self.snake_body.insert(0, list(self.snake_head_pos))
         # if the snake eats the food
         if self.snake_head_pos[0] == food_pos[0] and self.snake_head_pos[1] == food_pos[1]:
             # placing new food
-            food_pos = [random.randrange(1, screen_width / STEP) * STEP,
-                        random.randrange(1, screen_height / STEP) * STEP]
+            food_pos = [random.randrange(1 + BOARDWIDTH / STEP, (screen_width - BOARDWIDTH) / STEP) * STEP,
+                        random.randrange(1 + BOARDWIDTH / STEP, (screen_height - Y_STARTING_POINT - BOARDWIDTH) / STEP) * STEP]
             score += 1
             checking_eating_food = True
         else:
-            # если еды тут не оказалось, то удаляем последний элемент, который создавали в начале этой функции
+            # at first we replaced every part of the snake and added one block for new snake's head position
+            # now we need to delete the last segment, if the shake hasn't eaten food
             self.snake_body.pop()
             checking_eating_food = False
 
         return score, food_pos, checking_eating_food
 
-    def draw_snake(self, play_surface, surface_color):
+    def draw_snake(self, play_surface):
         global STEP
         # we draw segments of the snake's body here
-        # FIXME я так понимаю, что сначала мы фон заливаем основным цветом, так что прорисовка препедствий тут где то тоже будет
-        play_surface.fill(surface_color)
         for pos in self.snake_body:
             pygame.draw.rect(play_surface, self.snake_color, pygame.Rect(pos[0], pos[1], STEP, STEP))
 
     def check_for_boundaries(self, game_over, screen_width, screen_height):
         # checking collisions with walls
-        global STEP
+        global STEP, BOARDWIDTH, Y_STARTING_POINT
         if any((
-                self.snake_head_pos[0] > screen_width - STEP
-                or self.snake_head_pos[0] < 0,
-                self.snake_head_pos[1] > screen_height - STEP
-                or self.snake_head_pos[1] < 0
+                self.snake_head_pos[0] > screen_width - BOARDWIDTH - 2*STEP
+                or self.snake_head_pos[0] < BOARDWIDTH + STEP,
+                self.snake_head_pos[1] > screen_height - BOARDWIDTH - STEP
+                or self.snake_head_pos[1] < BOARDWIDTH + STEP + Y_STARTING_POINT
                     )):
             game_over()
         # checking eating tail

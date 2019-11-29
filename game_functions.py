@@ -45,10 +45,8 @@ class Game():
 
     def event_loop(self, new_direction):
         # check events from the keyboard
-
-        # ищем нужные нам события из списка (нажатия стрелочек)
         for event in pygame.event.get():
-            # проверка того, что нажали именно какую-то клавишу
+            # checking which buttons on the keyboard were pressed
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT or event.key == ord('d'):
                     new_direction = "RIGHT"
@@ -58,7 +56,7 @@ class Game():
                     new_direction = "DOWN"
                 elif event.key == pygame.K_UP or event.key == ord('w'):
                     new_direction = "UP"
-                    # нажали escape
+                    # press escape to end the game
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
@@ -71,7 +69,7 @@ class Game():
         self.fps_controller.tick(FPS)
 
     def show_score(self, choice=1):
-        # show resiult
+        # show result
         s_font = pygame.font.SysFont('monaco', 24)
         s_surf = s_font.render('Score: {0}'.format(self.score), True, self.black)
         s_rect = s_surf.get_rect()
@@ -80,7 +78,7 @@ class Game():
             s_rect.midtop = (80, 10)
         # result is placed in the center in the end of the game
         else:
-            s_rect.midtop = (360, 120)
+            s_rect.midtop = (360, 150)
         # the label with score is placed ON the main surface
         self.play_surface.blit(s_surf, s_rect)
 
@@ -89,7 +87,7 @@ class Game():
         go_font = pygame.font.SysFont('monaco', 72)
         go_surf = go_font.render('Game over', True, self.red)
         go_rect = go_surf.get_rect()
-        go_rect.midtop = (360, 15)
+        go_rect.midtop = (360, 100)
         self.play_surface.blit(go_surf, go_rect)
         self.show_score(0)
         pygame.display.flip()
