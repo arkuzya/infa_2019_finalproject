@@ -12,7 +12,6 @@ class Obstacles():
     def __init__(self, obstacle_color):
         self.obstacle_color = obstacle_color
 
-
 class ObstacleRectangles(Obstacles):
     def __init__(self, obstacle_color, size_x, size_y, x, y):
         self.obstacle_color = obstacle_color
