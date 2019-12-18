@@ -22,6 +22,7 @@ class Game():
         self.black = pygame.Color(0, 0, 0)
         self.white = pygame.Color(255, 255, 255)
         self.brown = pygame.Color(165, 42, 42)
+        self.grey = pygame.Color(200, 200, 200)
 
         # Frame per second controller
         self.fps_controller = pygame.time.Clock()

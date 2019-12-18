@@ -6,7 +6,7 @@ from game_functions import Game
 from snake import Snake
 from food import Food
 from obstacles import ObstacleRectangles
-
+from barriers import Barrier, BarrierPixels
 
 # the upper point of the playing  area
 Y_STARTING_POINT = 50
@@ -31,31 +31,51 @@ def draw_all_objects_on_the_surface(surface_color):
     food.draw_food(game.play_surface)
     for obs in list_obstacles_boards:
         obs.draw_obstacle(game.play_surface)
+    for block in list_barriers:
+        for brick in block:
+            brick.draw_barrier(game.play_surface)
 
 
 # set everything for game
 game = Game()
 snake = Snake(game.green)
-food = Food(game.brown, game.screen_width, game.screen_height)
+
+# Many barriers's creating
+
+N_barriers = random.randint(1, 10)
+N_barriers = 18
+list_barriers_all = [None] * N_barriers
+list_barriers = [1] * N_barriers
+for j in range(N_barriers):
+    list_barriers_all[j] = Barrier()
+    list_barriers_all[j].coordinates()
+    list_barriers_all[j].pixelization()
+
+    list_barriers[j] = [0] * list_barriers_all[j].length
+    for i in range(list_barriers_all[j].length):
+        list_barriers[j][i] = BarrierPixels(list_barriers_all[j].pixel[i], game.grey)
+
+food = Food(list_barriers, game.brown, game.screen_width, game.screen_height)
+
+
 # making obstacles
 list_obstacles_boards = []
 obstacle_left = ObstacleRectangles(game.black,
                                    BOARDWIDTH, game.screen_height - Y_STARTING_POINT,
                                    0, Y_STARTING_POINT)
-list_obstacles_boards += [obstacle_left]
 obstacle_right = ObstacleRectangles(game.black,
                                     BOARDWIDTH, game.screen_height - Y_STARTING_POINT,
                                     game.screen_width - BOARDWIDTH, Y_STARTING_POINT)
-list_obstacles_boards += [obstacle_right]
 obstacle_up = ObstacleRectangles(game.black,
                                  game.screen_width, BOARDWIDTH,
                                  0, Y_STARTING_POINT)
-list_obstacles_boards += [obstacle_up]
 obstacle_down = ObstacleRectangles(game.black,
                                    game.screen_width, BOARDWIDTH,
                                    0, game.screen_height - BOARDWIDTH)
+list_obstacles_boards += [obstacle_left]
+list_obstacles_boards += [obstacle_right]
+list_obstacles_boards += [obstacle_up]
 list_obstacles_boards += [obstacle_down]
-
 
 game.init_and_check_for_errors()
 game.set_surface_and_title()
@@ -68,12 +88,12 @@ while True:
     snake.validate_direction_and_change()
     snake.change_head_position()
     game.score, food.food_pos, checking_eating_food = snake.snake_body_mechanism(
-        game.score, food.food_pos, game.screen_width, game.screen_height)
+        game.score, list_barriers, food.food_pos, game.screen_width, game.screen_height)
 
     draw_all_objects_on_the_surface(game.white)
 
     snake.check_for_boundaries(
-        game.game_over, game.screen_width, game.screen_height)
+        game.game_over, list_barriers, game.screen_width, game.screen_height)
 
     if checking_eating_food:
         game.changing_fps()

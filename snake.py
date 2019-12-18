@@ -46,15 +46,21 @@ class Snake():
         elif self.direction == "DOWN":
             self.snake_head_pos[1] += STEP
 
-    def snake_body_mechanism(self, score, food_pos, screen_width, screen_height):
+    def snake_body_mechanism(self, score, barriers, food_pos, screen_width, screen_height):
         global STEP, BOARDWIDTH
         # moving snake's body
         self.snake_body.insert(0, list(self.snake_head_pos))
         # if the snake eats the food
         if self.snake_head_pos[0] == food_pos[0] and self.snake_head_pos[1] == food_pos[1]:
             # placing new food
-            food_pos = [random.randrange(1 + BOARDWIDTH / STEP, (screen_width - BOARDWIDTH) / STEP) * STEP,
-                        random.randrange(1 + BOARDWIDTH / STEP, (screen_height - Y_STARTING_POINT - BOARDWIDTH) / STEP) * STEP]
+            truth = 0
+            while not truth:
+                truth = 1
+                food_pos = [random.randrange(1 + BOARDWIDTH / STEP, (screen_width - BOARDWIDTH) / STEP) * STEP,
+                            random.randrange(1 + (Y_STARTING_POINT + BOARDWIDTH) / STEP, (screen_height - BOARDWIDTH) / STEP) * STEP]
+                for block in barriers:
+                    for brick in block:
+                        truth *= (brick.x != food_pos[0] and brick.y != food_pos[1])
             score += 1
             checking_eating_food = True
         else:
@@ -71,20 +77,26 @@ class Snake():
         for pos in self.snake_body:
             pygame.draw.rect(play_surface, self.snake_color, pygame.Rect(pos[0], pos[1], STEP, STEP))
 
-    def check_for_boundaries(self, game_over, screen_width, screen_height):
+    def check_for_boundaries(self, game_over, barriers, screen_width, screen_height):
         # checking collisions with walls
         global STEP, BOARDWIDTH, Y_STARTING_POINT
         if any((
-                self.snake_head_pos[0] > screen_width - BOARDWIDTH - 2*STEP
-                or self.snake_head_pos[0] < BOARDWIDTH + STEP,
-                self.snake_head_pos[1] > screen_height - BOARDWIDTH - STEP
-                or self.snake_head_pos[1] < BOARDWIDTH + STEP + Y_STARTING_POINT
-                    )):
+                self.snake_head_pos[0] > screen_width - BOARDWIDTH - 2*STEP,
+                self.snake_head_pos[0] < BOARDWIDTH + STEP,
+                self.snake_head_pos[1] > screen_height - BOARDWIDTH - STEP,
+                self.snake_head_pos[1] < BOARDWIDTH + STEP + Y_STARTING_POINT
+                )):
             game_over()
+
+        # checking collisions with barriers
+        for block in barriers:
+            for brick in block:
+                if self.snake_head_pos[0] == brick.x and self.snake_head_pos[1] == brick.y:
+                    game_over()
+
         # checking eating tail
         for block in self.snake_body[1:]:
-            if (block[0] == self.snake_head_pos[0] and
-                    block[1] == self.snake_head_pos[1]):
+            if block[0] == self.snake_head_pos[0] and block[1] == self.snake_head_pos[1]:
                 game_over()
 
 

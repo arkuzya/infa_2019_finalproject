@@ -8,11 +8,8 @@ import time
 # BOARDWIDTH --- the width of the obstacles, which are set on the boards
 BOARDWIDTH = 20
 
-class Obstacles():
-    def __init__(self, obstacle_color):
-        self.obstacle_color = obstacle_color
 
-class ObstacleRectangles(Obstacles):
+class ObstacleRectangles:
     def __init__(self, obstacle_color, size_x, size_y, x, y):
         self.obstacle_color = obstacle_color
         self.size_x = size_x
@@ -25,4 +22,3 @@ class ObstacleRectangles(Obstacles):
             play_surface, self.obstacle_color, pygame.Rect(
                 self.x, self.y,
                 self.size_x, self.size_y))
-
